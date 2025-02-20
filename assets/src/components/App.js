@@ -15,7 +15,6 @@ const template = `
       </vs-select>
     </div>
 
-
     <!--Loader-->
     <template v-if="currentState === 'LOADING'">
       <vs-loader center class="u-mt"></vs-loader>
@@ -79,9 +78,7 @@ const App = {
     // data
     const data = reactive({
       currentState: 'INITIAL',
-      isLoading: false,
       isFormSubmitLoading: false,
-      isError: false,
       isAlert: false,
       alertType: 'success',
       alertMessage: '',
@@ -150,6 +147,7 @@ const App = {
      */
     async function loadConfigurations() {
       data.currentState = 'LOADING';
+      data.isAlert = false;
       try {
         const response = await ZDClient.getZisConfigApi(data.integrationKey);
         data.config = response.configs[0].config;
@@ -157,7 +155,6 @@ const App = {
         data.currentState = 'CONFIGURATION';
       } catch (error) {
         console.error(error);
-        data.isError = true;
         data.currentState = 'ERROR';
       }
     }
