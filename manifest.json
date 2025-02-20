@@ -1,0 +1,28 @@
+{
+  "name": "Zendesk ZIS Configuration App",
+  "version": "1.0.0",
+  "frameworkVersion": "2.0",
+  "author": {
+    "name": "Ashwin Shenoy",
+    "email": "devloper77@gmail.com",
+    "url": "https://www.buymeacoffee.com/ashwinshenoy"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": {
+    "support": {
+      "nav_bar": "assets/iframe.html"
+    }
+  },
+  "parameters": [
+    {
+      "name": "IS_PRODUCTION",
+      "type": "hidden",
+      "default": "true"
+    },
+    {
+      "name": "zis_integration_key",
+      "type": "text"
+    }
+  ]
+}
