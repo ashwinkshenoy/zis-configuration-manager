@@ -133,7 +133,7 @@ const App = {
     });
 
     /**
-     * Load all Integration and set in dropdown
+     * Load all integration and set in dropdown options
      */
     async function loadIntegrations() {
       try {
@@ -146,7 +146,7 @@ const App = {
     }
 
     /**
-     * Load Configurations using ZIS config GET API and setting the config data
+     * Load configurations using ZIS config GET API and setting the config data form
      */
     async function loadConfigurations() {
       data.currentState = 'LOADING';
