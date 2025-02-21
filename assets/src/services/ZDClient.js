@@ -203,6 +203,37 @@ const ZDClient = {
       },
     );
   },
+
+  /**
+   * Get ZIS bundle UUID
+   * @param {String} integrationKey
+   * @returns {Promise}
+   */
+  getBundleUUID(integrationKey) {
+    return this.request(
+      `/api/services/zis/registry/${integrationKey}/bundles`,
+      {},
+      {
+        method: 'GET',
+      },
+    );
+  },
+
+  /**
+   * Get ZIS bundle
+   * @param {String} integrationKey
+   * @param {String} uuid
+   * @returns {Promise}
+   */
+  getBundle(integrationKey, uuid) {
+    return this.request(
+      `/api/services/zis/registry/${integrationKey}/bundles/${uuid}`,
+      {},
+      {
+        method: 'GET',
+      },
+    );
+  },
 };
 
 export default ZDClient;

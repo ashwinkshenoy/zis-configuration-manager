@@ -1,5 +1,5 @@
 <h1 align="center">
-  ZIS Configuration App
+  ZIS Manager App
   <br />
   <img src="https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg">
   <img src="https://img.shields.io/badge/Made%20With-Love-orange.svg">

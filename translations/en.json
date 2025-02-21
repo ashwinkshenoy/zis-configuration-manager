@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Zendesk ZIS Configuration App",
+    "name": "Zendesk ZIS Manager",
     "description": "This app allows you to configure the Zendesk Integration Service (ZIS) configurations.",
     "parameters": {
       "zis_integration_key": {

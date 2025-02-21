@@ -1,6 +1,10 @@
 const template = `
 <div class="container u-mt-lg">
-  <div :class="['white-box u-2/3', {'loading': isFormSubmitLoading}]">
+  
+  <!-- ================= -->
+  <!--Configuration State-->
+  <!-- ================= -->
+  <div class="white-box u-3/4">
     <h2 class="u-bold u-fs-xxl u-mb type-title">
       ZIS Configuration
     </h2>
@@ -46,20 +50,76 @@ const template = `
           v-model="config[key]" 
           class="c-txt__input c-txt__input--area" 
           :type="typeof value === 'number' ? 'number' : 'text'"
-          :id="key"
-        ></textarea>
+          :id="key">
+        </textarea>
       </div>
-      <vs-button
-        fill
-        class="u-mt-sm"
-        :is-loading="isFormSubmitLoading"
-        @click="submitForm">
-        Save
-      </vs-button>
+      <div class="row u-mt u-mb">
+        <div class="col">
+          <vs-button
+            fill
+            size="small"
+            :is-loading="isFormSubmitLoading"
+            @click="submitForm">
+            Save
+          </vs-button>
+        </div>
+        <div class="col u-ta-right">
+          <vs-button
+            variant="primary"
+            size="small"
+            @click="copyToClipboard(JSON.stringify(config, null, 4))">
+            Copy To Clipboard
+          </vs-button>
+        </div>
+      </div>
 
-      <vs-alert :variant="alertType" no-bg small v-if="isAlert">{{ alertMessage }}</vs-alert>
+      <vs-alert 
+        :variant="alertType" 
+        no-bg 
+        small 
+        v-if="isAlert">
+        {{ alertMessage }}
+      </vs-alert>
     </template>
   </div>
+
+  <!-- ========== -->
+  <!--Bundle State-->
+  <!-- ========== -->
+  <template v-if="currentState !== 'INITIAL'">
+    <div class="white-box u-mt-md u-3/4">
+      <h2 class="u-bold u-fs-xxl u-mb-lg type-title">
+        ZIS Bundle
+      </h2>
+
+      <!--Loader-->
+      <template v-if="bundleState === 'LOADING'">
+        <vs-loader center class="u-mt"></vs-loader>
+      </template>
+
+      <!--Error Alert-->
+      <vs-alert v-if="bundleState === 'ERROR'" variant="warning">
+        ZIS Bundle could not be loaded or found. Please try again!
+      </vs-alert>
+
+      <!--Bundle Available-->
+      <template v-if="bundleState === 'AVAILABLE'">
+        <vs-button
+          variant="primary"
+          class="u-mb"
+          size="small"
+          @click="copyToClipboard(zisBundle)">
+          Copy To Clipboard
+        </vs-button>
+        <textarea 
+          v-model="zisBundle" 
+          class="c-txt__input c-txt__input--area"
+          readonly>
+        </textarea>
+      </template>
+    </div>
+  </template>
+
 </div>`;
 
 import ZDClient from '../services/ZDClient.js';
@@ -90,6 +150,10 @@ const App = {
       config: {},
       integrationKey: ZDClient.app.settings.zis_integration_key,
       lastUpdatedAt: '',
+
+      bundleState: 'INITIAL',
+      bundleDetails: {},
+      zisBundle: {},
     });
 
     /**
@@ -125,7 +189,6 @@ const App = {
     });
 
     onMounted(async () => {
-      // initApp();
       loadIntegrations();
     });
 
@@ -146,6 +209,7 @@ const App = {
      * Load configurations using ZIS config GET API and setting the config data form
      */
     async function loadConfigurations() {
+      loadBundle();
       data.currentState = 'LOADING';
       data.isAlert = false;
       try {
@@ -183,8 +247,37 @@ const App = {
       }
     }
 
+    /**
+     * Load bundle UUID based on intergration key
+     */
+    async function loadBundle() {
+      data.bundleState = 'LOADING';
+      try {
+        const bundleUuidResponse = await ZDClient.getBundleUUID(data.integrationKey);
+        data.bundleDetails = bundleUuidResponse.bundles[0];
+        console.log(data.bundleDetails.uuid);
+
+        const bundleResponse = await ZDClient.getBundle(data.integrationKey, data.bundleDetails.uuid);
+        data.zisBundle = JSON.stringify(bundleResponse, null, 4);
+        console.log(bundleResponse);
+        data.bundleState = 'AVAILABLE';
+      } catch (error) {
+        console.error(error);
+        data.bundleState = 'ERROR';
+      }
+    }
+
+    /**
+     * Copy the bundle to clipboard
+     * @param {String} text
+     */
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      ZDClient.notify('Copied to clipboard!', 'success');
+    }
+
     // returning here functions and variables used by your template
-    return { ...toRefs(data), formattedKey, formatDate, submitForm, loadConfigurations };
+    return { ...toRefs(data), formattedKey, formatDate, submitForm, loadConfigurations, copyToClipboard };
   },
 };
 
